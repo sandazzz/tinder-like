@@ -1,10 +1,18 @@
 import React, { useState, useRef } from "react";
 import { View, Text, Image, TouchableOpacity, Dimensions } from "react-native";
 import Swiper from "react-native-deck-swiper";
+import { X, Check } from "lucide-react-native";
 
 const { width, height } = Dimensions.get("window");
 
-const profiles = [
+interface Profile {
+  name: string;
+  age: number;
+  bio: string;
+  image: string;
+}
+
+const profiles: Profile[] = [
   {
     name: "Alice",
     age: 24,
@@ -15,21 +23,26 @@ const profiles = [
     name: "Bob",
     age: 27,
     bio: "Développeur mobile et amateur de café",
-    image: "https://randomuser.me/api/portraits/men/2.jpg",
+    image: "https://randomuser.me/api/portraits/women/2.jpg",
   },
 ];
 
 export default function HomeScreen() {
   const [index, setIndex] = useState(0);
-  const swiperRef = useRef(null);
+  const swiperRef = useRef<Swiper<Profile> | null>(null);
 
   return (
     <View className="flex-1 items-center justify-center bg-gray-100">
-
       <View className="w-full h-3/4 mt-5">
         <Swiper
           ref={swiperRef}
           cards={profiles}
+          onSwipedLeft={() => {
+            console.log("Profil rejeté");
+          }}
+          onSwipedRight={() => {
+            console.log("Profil liké");
+          }}
           renderCard={(profile) => (
             <View
               className="bg-white rounded-2xl shadow-lg p-5"
@@ -52,19 +65,19 @@ export default function HomeScreen() {
         />
       </View>
 
-      <View className="flex-row gap-5 mt-5">
+      <View className="flex-row gap-6 mt-5">
         <TouchableOpacity
-          className="bg-red-500 p-4 rounded-full"
+          className="bg-white rounded-full shadow-xl flex items-center justify-center w-16 h-16 border border-gray-300 "
           onPress={() => swiperRef.current?.swipeLeft()}
         >
-          <Text className="text-white font-bold">❌</Text>
+          <X size={32} color="red" />
         </TouchableOpacity>
 
         <TouchableOpacity
-          className="bg-green-500 p-4 rounded-full"
+          className="bg-white rounded-full shadow-xl flex items-center justify-center w-16 h-16 border border-gray-300"
           onPress={() => swiperRef.current?.swipeRight()}
         >
-          <Text className="text-white font-bold">💚</Text>
+          <Check size={32} color="rgba(52, 199, 89, 0.8)" />
         </TouchableOpacity>
       </View>
     </View>
