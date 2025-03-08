@@ -1,78 +1,72 @@
-import { Image, StyleSheet, Platform, Text } from "react-native";
+import React, { useState, useRef } from "react";
+import { View, Text, Image, TouchableOpacity, Dimensions } from "react-native";
+import Swiper from "react-native-deck-swiper";
 
-import { HelloWave } from "@/components/HelloWave";
-import ParallaxScrollView from "@/components/ParallaxScrollView";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
+const { width, height } = Dimensions.get("window");
+
+const profiles = [
+  {
+    name: "Alice",
+    age: 24,
+    bio: "Fan de React et de voyages",
+    image: "https://randomuser.me/api/portraits/women/1.jpg",
+  },
+  {
+    name: "Bob",
+    age: 27,
+    bio: "Développeur mobile et amateur de café",
+    image: "https://randomuser.me/api/portraits/men/2.jpg",
+  },
+];
 
 export default function HomeScreen() {
+  const [index, setIndex] = useState(0);
+  const swiperRef = useRef(null);
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
-      headerImage={
-        <Image
-          source={require("@/assets/images/partial-react-logo.png")}
-          style={styles.reactLogo}
+    <View className="flex-1 items-center justify-center bg-gray-100">
+
+      <View className="w-full h-3/4 mt-5">
+        <Swiper
+          ref={swiperRef}
+          cards={profiles}
+          renderCard={(profile) => (
+            <View
+              className="bg-white rounded-2xl shadow-lg p-5"
+              style={{ width: width * 0.9, height: height * 0.7 }}
+            >
+              <Image
+                source={{ uri: profile.image }}
+                style={{ width: "100%", height: "80%", borderRadius: 20 }}
+              />
+              <Text className="text-xl font-bold mt-3">
+                {profile.name}, {profile.age}
+              </Text>
+              <Text className="text-gray-500 mt-1">{profile.bio}</Text>
+            </View>
+          )}
+          onSwiped={(cardIndex) => setIndex(cardIndex + 1)}
+          cardIndex={index}
+          stackSize={3}
+          backgroundColor="transparent"
         />
-      }
-    >
-      <ThemedView style={styles.titleContainer}>
-        <Text className="text-red-500">Welcome</Text>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit{" "}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText>{" "}
-          to see changes. Press{" "}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: "cmd + d",
-              android: "cmd + m",
-              web: "F12",
-            })}
-          </ThemedText>{" "}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this
-          starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{" "}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText>{" "}
-          to get a fresh <ThemedText type="defaultSemiBold">app</ThemedText>{" "}
-          directory. This will move the current{" "}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{" "}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+      </View>
+
+      <View className="flex-row gap-5 mt-5">
+        <TouchableOpacity
+          className="bg-red-500 p-4 rounded-full"
+          onPress={() => swiperRef.current?.swipeLeft()}
+        >
+          <Text className="text-white font-bold">❌</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          className="bg-green-500 p-4 rounded-full"
+          onPress={() => swiperRef.current?.swipeRight()}
+        >
+          <Text className="text-white font-bold">💚</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: "absolute",
-  },
-});
